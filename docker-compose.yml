@@ -1,0 +1,61 @@
+version: "3.7"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - redis
+            - meilisearch
+        networks:
+            - nix-mangas
+
+    nginx:
+        image: nginx:alpine
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - nix-mangas
+
+    mysql:
+        image: mysql:latest
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+        volumes:
+            - ./.docker/mysql/dbdata:/var/lib/mysql
+        ports:
+            - "3388:3306"
+        networks:
+            - nix-mangas
+
+    meilisearch:
+        image: getmeili/meilisearch:latest
+        ports:
+            - ${MEILI_PORT:-7700}:7700
+        networks:
+            - nix-mangas
+        volumes:
+            - ./.docker/meili_data:/meili_data
+        restart: unless-stopped
+
+    redis:
+        image: redis:latest
+        networks:
+            - nix-mangas
+
+networks:
+    nix-mangas:
+        driver: bridge
