@@ -1,6 +1,8 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v1.0.0...release/1.0.0)
+## [Unreleased](https://github.com/laravel/laravel/compare/v1.1.0...main)
+
+## [v1.1.0](https://github.com/laravel/laravel/compare/1.0.0...v1.1.0) - 2023-01-14
 
 ## [v1.0.0](https://github.com/laravel/laravel/compare/v9.5.0...v1.0.0) - 2023-01-12
 
