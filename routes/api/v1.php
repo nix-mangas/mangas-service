@@ -10,11 +10,14 @@
 use App\Account\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Infra\Http\Api\Controllers\Chapter\DeleteChapterController;
+use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
 use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
 use Infra\Http\Api\Controllers\Chapter\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
+use Infra\Http\Api\Controllers\Chapter\RestoreChapterController;
 use Infra\Http\Api\Controllers\Genre\DeleteGenreController;
 use Infra\Http\Api\Controllers\Genre\DestroyGenreController;
 use Infra\Http\Api\Controllers\Genre\ListAllGenresController;
@@ -127,7 +130,26 @@ Route::middleware(['auth:api', 'can:admin'])->group(function () {
     Route::patch('peoples/{id}/restore', RestorePeopleController::class);
     Route::patch('peoples/{id}/update', UpdatePeopleController::class);
 
+    Route::delete('chapters/{id}/delete', DeleteChapterController::class);
+    Route::delete('chapters/{id}/destroy', DestroyChapterController::class);
+    Route::patch('chapters/{id}/restore', RestoreChapterController::class);
     Route::post('chapters/upload', PublishChapterController::class);
+
+    Route::get('mangas/deleted', function () {
+        return response()->json(\App\Manga\Models\Manga::onlyTrashed()->get());
+    });
+    Route::get('chapters/deleted', function () {
+        return response()->json(\App\Chapter\Models\Chapter::onlyTrashed()->get());
+    });
+    Route::get('peoples/deleted', function () {
+        return response()->json(\App\People\Models\People::onlyTrashed()->get());
+    });
+    Route::get('scans/deleted', function () {
+        return response()->json(\App\Scan\Models\Scan::onlyTrashed()->get());
+    });
+    Route::get('genres/deleted', function () {
+        return response()->json(\App\Genre\Models\Genre::onlyTrashed()->get());
+    });
 });
 
 

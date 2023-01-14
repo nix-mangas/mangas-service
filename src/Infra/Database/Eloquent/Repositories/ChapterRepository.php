@@ -113,14 +113,14 @@ class ChapterRepository implements IChapterRepository {
                 $query->whereRelation('manga', 'slug', $manga)
                       ->where('published_at', '<=', now())
                       ->with([ 'scan' ])
-                      ->orderBy('number', $orderBy)
+                      ->orderBy('number', 'DESC')
             )->paginate($perPage);
         }
 
         return Chapter::whereRelation('manga', 'slug', $manga)
                       ->where('published_at', '<=', now())
                       ->with([ 'scan' ])
-                      ->orderBy('number', $orderBy)
+                      ->orderByDesc('number')
                       ->paginate($perPage);
     }
 
@@ -215,5 +215,15 @@ class ChapterRepository implements IChapterRepository {
             'chapter' => $chapter
         ];
 
+    }
+
+    public function getLatestChapterByManga(string $manga) {
+        $next = Chapter::withTrashed()->whereRelation('manga', 'slug', $manga)->latest('created_at')->first();
+
+        if (empty($next)) {
+            return 0;
+        }
+
+        return (int)$next['number'];
     }
 }

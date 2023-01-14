@@ -25,25 +25,34 @@ class PublishChapterUseCase {
                 return HttpResponse::notFound('Manga not found');
             }
 
-            $chapterAlreadyExits = $this->chapterRepository->exists(
-                manga : $manga->id,
-                number: $input['number']
-            );
-            if ($chapterAlreadyExits) {
-                return HttpResponse::conflict(
-                    'Chapter with number "'.$input['number'].'" in "'.$manga['title'].'" already exists!'
+            $input['is_published'] = false;
+
+            if (!empty($input['number'])) {
+                $chapterAlreadyExits = $this->chapterRepository->exists(
+                    manga : $manga->id,
+                    number: $input['number']
                 );
+                if ($chapterAlreadyExits) {
+                    return HttpResponse::conflict(
+                        'Chapter with number "'.$input['number'].'" in "'.$manga['title'].'" already exists!'
+                    );
+                }
+
+                $input['title']        = $manga['title'].' #'.$input['number'];
+                $input['slug']         = $manga['slug'].'/'.str($input['number'])->slug('.');
+                $chapterFolder = 'mangas/'.$manga['slug'].'/'.$input['number'].'/';
+            } else {
+                $latestChapterNumber  = $this->chapterRepository->getLatestChapterByManga($manga['slug']);
+                $nextChapter = $latestChapterNumber  + 1;
+                $input['number'] = $nextChapter;
+                $input['title'] = $manga['title'].' #'.$nextChapter;
+                $input['slug'] = $manga['slug'].'/'.str($nextChapter)->slug('.');
+                $chapterFolder = 'mangas/'.$manga['slug'].'/'.$nextChapter.'/';
             }
 
             if (!$input['pages']) {
                 return HttpResponse::clientError('pages is not provided!');
             }
-
-            $input['title']        = $manga['title'].' #'.$input['number'];
-            $input['slug']         = $manga['slug'].'/'.str($input['number'])->slug('.');
-            $input['is_published'] = false;
-
-            $chapterFolder = 'mangas/'.$manga['slug'].'/'.$input['number'].'/';
 
             if ($input['cover']) {
                 $filename = time().'-cover.'.$input['cover']->getClientOriginalExtension();

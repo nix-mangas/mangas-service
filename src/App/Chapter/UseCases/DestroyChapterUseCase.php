@@ -2,24 +2,24 @@
 
 namespace App\Chapter\UseCases;
 
-use App\Manga\Repositories\IMangaRepository;
+use App\Chapter\Repositories\IChapterRepository;
 use Support\Http\HttpResponse;
 use Illuminate\Http\JsonResponse;
 
-class DeleteMangaUseCase {
+class DestroyChapterUseCase {
 
-    public function __construct(private readonly IMangaRepository $mangaRepository)
+    public function __construct(private readonly IChapterRepository $chapterRepository)
     {
     }
 
-    public function execute(string $manga): JsonResponse
+    public function execute(string $chapter): JsonResponse
     {
         try {
-            $this->mangaRepository->delete($manga);
+            $this->chapterRepository->destroy($chapter);
 
             return HttpResponse::ok([
                 'status'  => 'success',
-                'message' => 'Manga deleted successfully!'
+                'message' => 'Chapter deleted successfully!'
             ]);
         } catch (\Exception $e) {
             return HttpResponse::fail($e->getMessage());

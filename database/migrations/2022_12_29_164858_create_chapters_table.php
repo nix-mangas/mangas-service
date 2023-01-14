@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('chapters', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->string('number');
+            $table->float('number', 8, 2);
             $table->string('slug')->unique();
             $table->string('title')->nullable();
             $table->string('cover')->nullable();
