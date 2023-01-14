@@ -6,10 +6,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Implementation
+    | Audit Implementation
     |--------------------------------------------------------------------------
     |
-    | Define which Auditing model implementation should be used.
+    | Define which Audit model implementation should be used.
     |
     */
 
@@ -24,9 +24,18 @@ return [
     |
     */
 
+    'user'      => [
+        'morph_prefix' => 'user',
+        'guards'       => [
+            'web',
+            'api'
+        ],
+        'resolver'     => OwenIt\Auditing\Resolvers\UserResolver::class
+    ],
+
     /*
     |--------------------------------------------------------------------------
-    | Auditing Resolvers
+    | Audit Resolvers
     |--------------------------------------------------------------------------
     |
     | Define the User, IP Address, User Agent and URL resolver implementations.
@@ -36,15 +45,14 @@ return [
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
         'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
-        'keycloak_auth_id' => Infra\Auditing\Resolvers\KeycloakAuthIdResolver::class
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Events
+    | Audit Events
     |--------------------------------------------------------------------------
     |
-    | The Eloquent events that trigger an Auditing.
+    | The Eloquent events that trigger an Audit.
     |
     */
 
@@ -83,7 +91,7 @@ return [
     | Empty Values
     |--------------------------------------------------------------------------
     |
-    | Should Auditing records be stored when the recorded old_values & new_values
+    | Should Audit records be stored when the recorded old_values & new_values
     | are both empty?
     |
     | Some events may be empty on purpose. Use allowed_empty_values to exclude
@@ -100,7 +108,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Timestamps
+    | Audit Timestamps
     |--------------------------------------------------------------------------
     |
     | Should the created_at, updated_at and deleted_at timestamps be audited?
@@ -111,10 +119,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Threshold
+    | Audit Threshold
     |--------------------------------------------------------------------------
     |
-    | Specify a threshold for the amount of Auditing records a model can have.
+    | Specify a threshold for the amount of Audit records a model can have.
     | Zero means no limit.
     |
     */
@@ -123,7 +131,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Driver
+    | Audit Driver
     |--------------------------------------------------------------------------
     |
     | The default audit driver used to keep track of changes.
@@ -134,7 +142,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Driver Configurations
+    | Audit Driver Configurations
     |--------------------------------------------------------------------------
     |
     | Available audit drivers and respective configurations.
@@ -150,7 +158,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditing Console
+    | Audit Console
     |--------------------------------------------------------------------------
     |
     | Whether console events should be audited (eg. php artisan db:seed).

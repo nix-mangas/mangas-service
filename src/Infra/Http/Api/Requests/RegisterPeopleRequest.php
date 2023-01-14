@@ -24,9 +24,8 @@ class RegisterPeopleRequest extends FormRequest {
     {
         return [
             'name'              => 'required|string',
-            'photo'             => 'nullable|string',
-            'office'            => 'nullable|string',
             'bio'               => 'nullable|string',
+            'photo'             => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
             'alternative_names' => 'nullable|array',
             'gender'            => 'nullable|string',
         ];

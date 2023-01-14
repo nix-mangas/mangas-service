@@ -13,12 +13,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Scan extends Model implements Auditable {
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
+    use Searchable;
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [

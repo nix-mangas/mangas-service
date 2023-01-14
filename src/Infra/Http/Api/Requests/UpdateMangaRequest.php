@@ -26,7 +26,7 @@ class UpdateMangaRequest extends \Illuminate\Foundation\Http\FormRequest {
     {
         return [
             'title'              => 'nullable|string',
-            'is_adult'           => 'nullable|boolean',
+            'is_adult'           => 'nullable',
             'synopses'           => 'nullable|string',
             'thumbnail'          => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
             'alternative_titles' => 'nullable|array',
