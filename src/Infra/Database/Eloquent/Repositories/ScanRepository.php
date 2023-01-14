@@ -9,17 +9,15 @@ use Illuminate\Support\Facades\Storage;
 class ScanRepository implements IScanRepository {
     public function list(array $filters)
     {
-        $orderBy = $filters['order'] ?? 'asc';
+        $orderBy = $filters['order'] ?? 'desc';
         $perPage = $filters['per_page'] ?? 30;
         $search  = $filters['search'] ?? null;
 
         if ($search) {
-            return Scan::where([ [ 'name', 'like', '%'.$search.'%' ] ])
-                       ->orderBy('name', $orderBy)
-                       ->paginate($perPage);
+            return Scan::search($search)->query(fn ($query) => $query->orderBy('created_at', $orderBy))->paginate($perPage);
         }
 
-        return Scan::orderBy('name', $orderBy)->paginate($perPage);
+        return Scan::orderBy('created_at', $orderBy)->paginate($perPage);
     }
 
     public function getAllMangasByScan(string $scan)

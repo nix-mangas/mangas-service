@@ -11,12 +11,13 @@ class GenreRepository implements IGenreRepository {
     {
         $orderBy = $filters['order'] ?? 'asc';
         $search  = $filters['search'] ?? null;
+        $perPage = $filters['per_page'] ?? 30;
 
         if ($search) {
-            return Genre::search($search)->get();
+            return Genre::search($search)->orderBy('name', $orderBy)->paginate($perPage);
         }
 
-        return Genre::orderBy('name', $orderBy)->get();
+        return Genre::orderBy('name', $orderBy)->paginate($perPage);
     }
 
     public function exists(string $slug): bool

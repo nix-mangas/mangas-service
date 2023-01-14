@@ -52,6 +52,10 @@ class MangaRepository implements IMangaRepository {
     {
         $manga = Manga::find($id);
 
+        if ($data['title']) {
+            $manga['slug'] = $data['title'];
+        }
+
         if (!empty($data['genres'])) {
             $manga->genres()->sync($data['genres']);
         }
@@ -97,7 +101,7 @@ class MangaRepository implements IMangaRepository {
 
 
         if ($search) {
-            return Manga::search($search)->paginate($perPage);
+            return Manga::search($search)->query(fn ($query) => $query->orderBy('created_at', $orderBy))->paginate($perPage);
         }
 
         return Manga::orderBy('created_at', $orderBy)->paginate($perPage);
@@ -111,7 +115,7 @@ class MangaRepository implements IMangaRepository {
 
         if ($search) {
             return Manga::search($search)
-                        ->query(fn ($query) => $query->whereRelation('genres', 'slug', $genre))
+                        ->query(fn ($query) => $query->whereRelation('genres', 'slug', $genre)->orderBy('created_at', $orderBy))
                         ->paginate($perPage);
         }
 

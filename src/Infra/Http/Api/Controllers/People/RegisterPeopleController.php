@@ -19,6 +19,6 @@ class RegisterPeopleController extends Controller {
     public function __invoke(RegisterPeopleRequest $request): JsonResponse
     {
         $request->validated();
-        return $this->useCase->execute($request->all());
+        return $this->useCase->execute(array_merge($request->all(), ['photo' => $request->file('photo')]));
     }
 }

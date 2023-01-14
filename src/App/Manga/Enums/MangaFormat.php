@@ -9,3 +9,4 @@ enum MangaFormat: string {
     case NOVEL = 'NOVEL';
     case SPINOFF = 'SPINOFF';
 }
+

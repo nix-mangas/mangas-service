@@ -24,7 +24,7 @@ class PublishChapterRequest extends FormRequest {
     public function rules()
     {
         return [
-            'number'         => 'required|string',
+            'number'         => 'nullable|string',
             'scan_id'        => 'nullable|exists:scans,id',
             'manga_id'       => 'required|exists:mangas,id',
             'scans_supports' => 'nullable|array',

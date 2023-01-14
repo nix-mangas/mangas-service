@@ -25,7 +25,7 @@ class RegisterScanRequest extends FormRequest {
         return [
             'name'        => "required|string",
             'email'       => "required|string",
-            'logo'        => "nullable|string",
+            'logo'        => "nullable|image|mimes:jpg,jpeg,png,gif,webp",
             'description' => "nullable|string",
             'website'     => "nullable|string",
             'discord'     => "nullable|string",

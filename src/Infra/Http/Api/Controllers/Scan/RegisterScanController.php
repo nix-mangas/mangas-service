@@ -18,6 +18,6 @@ class RegisterScanController extends Controller {
     public function __invoke(RegisterScanRequest $request): JsonResponse
     {
         $request->validated();
-        return $this->useCase->execute($request->all());
+        return $this->useCase->execute(array_merge($request->all(), [ 'logo' => $request->file('logo')]));
     }
 }
