@@ -105,6 +105,10 @@ Route::middleware(['auth:api', 'can:admin'])->group(function () {
         return response()->json(User::all());
     });
 
+    Route::get('tests', function () {
+        return response()->json(['status' => 'success']);
+    });
+
     Route::post('genres/new', RegisterGenreController::class);
     Route::delete('genres/{id}/delete', DeleteGenreController::class);
     Route::delete('genres/{id}/destroy', DestroyGenreController::class);

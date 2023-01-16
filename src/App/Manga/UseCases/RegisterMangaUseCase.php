@@ -40,9 +40,9 @@ class RegisterMangaUseCase {
                 $filename = time().'-cover.'.$input['cover']->getClientOriginalExtension();
                 $filepath = $coversFolder.$filename;
 
-                $s3_path = Storage::disk('s3')->put($filepath, file_get_contents($input['cover']));
-//                dd(Config::all());
-//
+                Storage::disk('s3')->put($filepath, file_get_contents($input['cover']));
+                dd(Config::all());
+
                 $input['cover'] = $filepath;
             }
 
