@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Chapter\UseCases;
+namespace App\Manga\UseCases;
 
 use App\Manga\Repositories\IMangaRepository;
 use Support\Http\HttpResponse;
@@ -12,6 +12,10 @@ class DeleteMangaUseCase {
     {
     }
 
+    /**
+     * @param string $manga
+     * @return JsonResponse
+     */
     public function execute(string $manga): JsonResponse
     {
         try {

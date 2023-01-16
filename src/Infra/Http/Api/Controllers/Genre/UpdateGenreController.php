@@ -2,12 +2,13 @@
 
 namespace Infra\Http\Api\Controllers\Genre;
 
+use App\Genre\UseCases\UpdateGenreUseCase;
 use Illuminate\Http\JsonResponse;
 use Infra\Http\Api\Requests\UpdateGenreRequest;
 use Infra\Http\App\Controllers\Controller;
 
 class UpdateGenreController extends Controller {
-    public function __construct(private readonly \App\Genre\UseCases\UpdateGenreUseCase $useCase)
+    public function __construct(private readonly UpdateGenreUseCase $useCase)
     {
     }
 

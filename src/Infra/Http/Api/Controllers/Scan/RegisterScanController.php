@@ -2,12 +2,13 @@
 
 namespace Infra\Http\Api\Controllers\Scan;
 
+use App\Scan\UseCases\RegisterScanUseCase;
 use Illuminate\Http\JsonResponse;
 use Infra\Http\Api\Requests\RegisterScanRequest;
 use Infra\Http\App\Controllers\Controller;
 
 class RegisterScanController extends Controller {
-    public function __construct(private readonly \App\Scan\UseCases\RegisterScanUseCase $useCase)
+    public function __construct(private readonly RegisterScanUseCase $useCase)
     {
     }
 

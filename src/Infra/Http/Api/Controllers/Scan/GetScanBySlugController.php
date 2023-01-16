@@ -2,12 +2,13 @@
 
 namespace Infra\Http\Api\Controllers\Scan;
 
+use App\Scan\UseCases\GetScanBySlugUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
 
 class GetScanBySlugController extends Controller {
-    public function __construct(private readonly \App\Scan\UseCases\GetScanBySlugUseCase $useCase)
+    public function __construct(private readonly GetScanBySlugUseCase $useCase)
     {
     }
 

@@ -2,11 +2,13 @@
 
 namespace Infra\Http\Api\Controllers\Scan;
 
+use App\Scan\UseCases\UpdateScanUseCase;
 use Illuminate\Http\JsonResponse;
 use Infra\Http\Api\Requests\UpdateScanRequest;
+use Infra\Http\App\Controllers\Controller;
 
-class UpdateScanController extends \Infra\Http\App\Controllers\Controller {
-    public function __construct(private readonly \App\Scan\UseCases\UpdateScanUseCase $useCase)
+class UpdateScanController extends Controller {
+    public function __construct(private readonly UpdateScanUseCase $useCase)
     {
     }
 

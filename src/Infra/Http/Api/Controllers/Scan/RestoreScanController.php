@@ -3,12 +3,13 @@
 namespace Infra\Http\Api\Controllers\Scan;
 
 use App\Scan\Models\Scan;
+use App\Scan\UseCases\RestoreScanUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
 
 class RestoreScanController extends Controller {
-    public function __construct(private readonly \App\Scan\UseCases\RestoreScanUseCase $useCase)
+    public function __construct(private readonly RestoreScanUseCase $useCase)
     {
     }
 

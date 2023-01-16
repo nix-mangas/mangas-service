@@ -2,12 +2,13 @@
 
 namespace Infra\Http\Api\Controllers\Genre;
 
+use App\Genre\UseCases\ListAllGenresUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
 
 class ListAllGenresController extends Controller {
-    public function __construct(private readonly \App\Genre\UseCases\ListAllGenresUseCase $useCase)
+    public function __construct(private readonly ListAllGenresUseCase $useCase)
     {
     }
 
