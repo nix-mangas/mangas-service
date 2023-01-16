@@ -76,11 +76,6 @@ class ScanRepository implements IScanRepository {
     public function destroy(string $id): void
     {
         $scan = Scan::withTrashed()->find($id);
-
-        if ((bool)$scan && $scan['logo'] &&   Storage::disk('s3')->exists($scan['logo'])) {
-            Storage::disk('s3')->delete($scan['logo']);
-        }
-
         $scan?->forceDelete();
     }
 

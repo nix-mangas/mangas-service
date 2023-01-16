@@ -76,15 +76,6 @@ class MangaRepository implements IMangaRepository {
     public function destroy(string $id): void
     {
         $manga = Manga::withTrashed()->find($id);
-
-        if((bool)$manga && $manga['cover'] && Storage::disk('s3')->exists($manga['cover'])) {
-            Storage::disk('s3')->delete($manga['cover']);
-        }
-
-        if((bool)$manga && $manga['thumbnail'] && Storage::disk('s3')->exists($manga['thumbnail'])) {
-            Storage::disk('s3')->delete($manga['thumbnail']);
-        }
-
         $manga?->forceDelete();
     }
 

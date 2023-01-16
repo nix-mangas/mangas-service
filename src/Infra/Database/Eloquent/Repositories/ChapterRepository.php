@@ -155,15 +155,6 @@ class ChapterRepository implements IChapterRepository {
     public function destroy(string $id): void
     {
         $chapter = Chapter::withTrashed()->find($id);
-
-        if ((bool)$chapter && $chapter['pages']) {
-            foreach ($chapter['pages'] as $page) {
-                if(Storage::disk('s3')->exists($page['page_url'])) {
-                    Storage::disk('s3')->delete($page['page_url']);
-                }
-            }
-        }
-
         $chapter?->forceDelete();
     }
 

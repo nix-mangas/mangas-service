@@ -44,9 +44,6 @@ class GenreRepository implements IGenreRepository {
     public function destroy(string $id): void
     {
         $genre = Genre::withTrashed()->find($id);
-        if ((bool)$genre && $genre['icon'] && Storage::disk('s3')->exists($genre['icon'])) {
-            Storage::disk('s3')->delete($genre['icon']);
-        }
         $genre?->forceDelete();
     }
 

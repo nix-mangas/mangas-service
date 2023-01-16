@@ -54,11 +54,6 @@ class PeopleRepository implements IPeopleRepository {
     public function destroy(string $id)
     {
         $people = People::withTrashed()->find($id);
-
-        if ((bool)$people && $people['photo'] && Storage::disk('s3')->exists($people['photo'])) {
-            Storage::disk('s3')->delete($people['photo']);
-        }
-
         $people?->forceDelete();
     }
 
