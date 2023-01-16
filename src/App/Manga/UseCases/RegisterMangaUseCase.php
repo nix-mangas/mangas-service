@@ -41,7 +41,6 @@ class RegisterMangaUseCase {
                 $filepath = $coversFolder.$filename;
 
                 Storage::disk('s3')->put($filepath, file_get_contents($input['cover']));
-                dd(Config::all());
 
                 $input['cover'] = $filepath;
             }
