@@ -1,4 +1,4 @@
-FROM php:8.2.1-fpm
+FROM php:8.2.1-fpm as build-step
 
 # set your user name, ex: user=bernardo
 ARG user=app
@@ -37,3 +37,8 @@ RUN pecl install -o -f redis \
 WORKDIR /var/www
 
 USER $user
+
+FROM nginx:1.15.0-alpine
+
+COPY --from=build-step /var/www /var/www
+COPY ./docker/nginx/ /etc/nginx/conf.d/
