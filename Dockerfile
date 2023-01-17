@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Add custom php.ini
+ADD ./uploads.ini /usr/local/etc/php/conf.d/custom-php.ini
+
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 
