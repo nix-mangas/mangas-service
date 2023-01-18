@@ -7,6 +7,7 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
         working_dir: /var/www/
+        tty: true
         volumes:
             - ./:/var/www
         networks:
@@ -14,9 +15,12 @@ services:
 
     nginx:
         image: nginx:alpine
+        container_name: webserver
         restart: unless-stopped
+        tty: true
         ports:
-            - "8000:80"
+          - "80:80"
+          - "443:443"
         volumes:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
