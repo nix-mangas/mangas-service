@@ -1,8 +1,7 @@
 FROM php:8.2.1-fpm
 
-# set your user name, ex: user=bernardo
-ARG user=app
-ARG uid=1000
+ENV USER=www
+ENV GROUP=www
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,26 +16,34 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Add custom php.ini
-ADD ./uploads.ini /usr/local/etc/php/conf.d/custom-php.ini
-
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Postgre PDO
+RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql
 
 # Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
-
-# Install redis
 RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
-# Set working directory
-WORKDIR /var/www
+# Setup working directory
+WORKDIR /var/www/
 
-USER $user
+# Create User and Group
+RUN groupadd -g 1000 ${GROUP} && useradd -u 1000 -ms /bin/bash -g ${GROUP} ${USER}
+
+# Grant Permissions
+RUN chown -R ${USER} /var/www
+
+# Select User
+USER ${USER}
+
+# Copy permission to selected user
+COPY --chown=${USER}:${GROUP} . .
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
