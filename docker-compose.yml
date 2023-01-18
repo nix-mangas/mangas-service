@@ -19,8 +19,6 @@ services:
         container_name: webserver
         restart: unless-stopped
         tty: true
-        ports:
-          - "80:80"
         volumes:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
