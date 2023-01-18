@@ -9,9 +9,6 @@ services:
         working_dir: /var/www/
         volumes:
             - ./:/var/www
-        depends_on:
-            - redis
-            - meilisearch
         networks:
             - nix-mangas
 
