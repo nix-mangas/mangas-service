@@ -1,37 +1,93 @@
-FROM dwchiang/nginx-php-fpm:8.2.0beta3-fpm-alpine3.15-nginx-1.21.6
+FROM php:8.1-fpm
 
-ENV PATH="/composer/vendor/bin:$PATH" \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    COMPOSER_VENDOR_DIR=/var/www/vendor \
-    COMPOSER_HOME=/composer
+# set main params
+ARG BUILD_ARGUMENT_ENV=dev
+ENV ENV=$BUILD_ARGUMENT_ENV
+ENV APP_HOME /var/www/html
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+ENV USERNAME=www-data
+ARG INSIDE_DOCKER_CONTAINER=1
+ENV INSIDE_DOCKER_CONTAINER=$INSIDE_DOCKER_CONTAINER
+ARG XDEBUG_CONFIG=main
+ENV XDEBUG_CONFIG=$XDEBUG_CONFIG
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer --ansi --version --no-interaction
+# check environment
+RUN if [ "$BUILD_ARGUMENT_ENV" = "default" ]; then echo "Set BUILD_ARGUMENT_ENV in docker build-args like --build-arg BUILD_ARGUMENT_ENV=dev" && exit 2; \
+    elif [ "$BUILD_ARGUMENT_ENV" = "dev" ]; then echo "Building development environment."; \
+    elif [ "$BUILD_ARGUMENT_ENV" = "test" ]; then echo "Building test environment."; \
+    elif [ "$BUILD_ARGUMENT_ENV" = "staging" ]; then echo "Building staging environment."; \
+    elif [ "$BUILD_ARGUMENT_ENV" = "prod" ]; then echo "Building production environment."; \
+    else echo "Set correct BUILD_ARGUMENT_ENV in docker build-args like --build-arg BUILD_ARGUMENT_ENV=dev. Available choices are dev,test,staging,prod." && exit 2; \
+    fi
 
-WORKDIR /var/www/app
-COPY ./composer.json ./composer.lock* ./
-RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
+# install all the dependencies and enable PHP modules
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    procps \
+    nano \
+    git \
+    unzip \
+    libicu-dev \
+    zlib1g-dev \
+    libxml2 \
+    libxml2-dev \
+    libreadline-dev \
+    supervisor \
+    cron \
+    sudo \
+    libzip-dev \
+    && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install \
+    pdo_mysql \
+    sockets \
+    intl \
+    opcache \
+    zip \
+    && rm -rf /tmp/* \
+    && rm -rf /var/list/apt/* \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-ENV FPM_PM_MAX_CHILDREN=20 \
-    FPM_PM_START_SERVERS=2 \
-    FPM_PM_MIN_SPARE_SERVERS=1 \
-    FPM_PM_MAX_SPARE_SERVERS=3
+# create document root, fix permissions for www-data user and change owner to www-data
+RUN mkdir -p $APP_HOME/public && \
+    mkdir -p /home/$USERNAME && chown $USERNAME:$USERNAME /home/$USERNAME \
+    && usermod -o -u $HOST_UID $USERNAME -d /home/$USERNAME \
+    && groupmod -o -g $HOST_GID $USERNAME \
+    && chown -R ${USERNAME}:${USERNAME} $APP_HOME
 
-ENV APP_NAME="Question Board" \
-    APP_ENV=production \
-    APP_DEBUG=false
+# put php config for Laravel
+COPY ./docker/$BUILD_ARGUMENT_ENV/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./docker/$BUILD_ARGUMENT_ENV/php.ini /usr/local/etc/php/php.ini
 
-COPY ./docker/docker-php-* /usr/local/bin/
-RUN dos2unix /usr/local/bin/docker-php-entrypoint
-RUN dos2unix /usr/local/bin/docker-php-entrypoint-dev
+# install Xdebug in case dev/test environment
+COPY ./docker/general/do_we_need_xdebug.sh /tmp/
+COPY ./docker/dev/xdebug-${XDEBUG_CONFIG}.ini /tmp/xdebug.ini
+RUN chmod u+x /tmp/do_we_need_xdebug.sh && /tmp/do_we_need_xdebug.sh
 
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
-COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
+# install composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN chmod +x /usr/bin/composer
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-WORKDIR /var/www/app
+# add supervisor
+RUN mkdir -p /var/log/supervisor
+COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
+RUN chmod 0600 /var/spool/cron/crontabs/root
 
-COPY . .
+# set working directory
+WORKDIR $APP_HOME
 
-#EXPOSE 80
+USER ${USERNAME}
 
-#CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+# copy source files and config file
+COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
+COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
+
+# install all PHP dependencies
+RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-interaction --no-progress; \
+    else COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-interaction --no-progress --no-dev; \
+    fi
+
+USER root
