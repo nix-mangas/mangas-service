@@ -51,6 +51,4 @@ COPY . /var/www/html
 RUN composer install
 RUN chmod +x /usr/local/bin/start-container
 
-EXPOSE 8000
-
 ENTRYPOINT ["start-container"]
