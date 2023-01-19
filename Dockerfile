@@ -48,4 +48,4 @@ COPY php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
 COPY . /var/www/html
 RUN composer install
 
-CMD ["/usr/bin/php /var/www/html/artisan serve --host=0.0.0.0 --port=8000"]
+CMD /usr/bin/php artisan serve --host=0.0.0.0 --port=8000
