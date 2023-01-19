@@ -9,7 +9,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && composer --ansi --version --no-interaction
 
 WORKDIR /var/www/app
-COPY ./src/composer.json ./src/composer.lock* ./
+COPY ./composer.json ./composer.lock* ./
 RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
 ENV FPM_PM_MAX_CHILDREN=20 \
