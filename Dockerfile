@@ -1,4 +1,4 @@
-FROM fhsinchy/php-nginx-base:php8.2.1-fpm-nginx1.20.2-alpine3.15
+FROM dwchiang/nginx-php-fpm:8.2.0beta3-fpm-alpine3.15-nginx-1.21.6
 
 ENV PATH="/composer/vendor/bin:$PATH" \
     COMPOSER_ALLOW_SUPERUSER=1 \
