@@ -1,32 +1,17 @@
-FROM webdevops/php-nginx:8.2-alpine
+FROM php:7.4-fpm
+RUN apt-get update && apt-get install -y nginx
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
 
-# Install Laravel framework system requirements (https://laravel.com/docs/8.x/deployment#optimizing-configuration-loading)
-RUN apk add oniguruma-dev postgresql-dev libxml2-dev
-RUN docker-php-ext-install \
-    bcmath \
-    ctype \
-    fileinfo \
-    json \
-    mbstring \
-    pdo_mysql \
-    pdo_pgsql \
-    tokenizer \
-    xml
+COPY . /var/www/html
 
-# Copy Composer binary from the Composer official Docker image
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN chown -R www-data:www-data /var/www/html
+RUN composer install
 
-ENV WEB_DOCUMENT_ROOT /app/public
-ENV APP_ENV production
-WORKDIR /app
-COPY . .
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN composer install --no-interaction --optimize-autoloader --no-dev
-# Optimizing Configuration loading
-RUN php artisan config:cache
-# Optimizing Route loading
-RUN php artisan route:cache
-# Optimizing View loading
-RUN php artisan view:cache
+EXPOSE 80
 
-RUN chown -R application:application .
+CMD ["nginx", "-g", "daemon off;"]
