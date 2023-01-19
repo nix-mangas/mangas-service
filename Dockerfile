@@ -32,6 +32,6 @@ WORKDIR /var/www/app
 
 COPY . .
 
-EXPOSE 80
+#EXPOSE 80
 
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
