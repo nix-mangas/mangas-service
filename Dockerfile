@@ -1,47 +1,38 @@
-FROM php:8.1.3-fpm-alpine3.15
+FROM fhsinchy/php-nginx-base:php8.1.3-fpm-nginx1.20.2-alpine3.15
 
-ENV NGINX_VERSION 1.20.2
-ENV NJS_VERSION   0.7.0
-ENV PKG_RELEASE   1
+ENV PATH="/composer/vendor/bin:$PATH" \
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_VENDOR_DIR=/var/www/vendor \
+    COMPOSER_HOME=/composer
 
-RUN apk update && apk add --no-cache \
-    zip \
-    unzip \
-    dos2unix \
-    supervisor \
-    libpng-dev \
-    libzip-dev \
-    freetype-dev \
-    $PHPIZE_DEPS \
-    libjpeg-turbo-dev
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && composer --ansi --version --no-interaction
 
-RUN docker-php-ext-install \
-    gd \
-    pcntl \
-    bcmath \
-    mysqli \
-    pdo_mysql
+WORKDIR /var/www/app
+COPY ./src/composer.json ./src/composer.lock* ./
+RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+ENV FPM_PM_MAX_CHILDREN=20 \
+    FPM_PM_START_SERVERS=2 \
+    FPM_PM_MIN_SPARE_SERVERS=1 \
+    FPM_PM_MAX_SPARE_SERVERS=3
 
-RUN pecl install zip && docker-php-ext-enable zip \
-    && pecl install igbinary && docker-php-ext-enable igbinary \
-    && yes | pecl install redis && docker-php-ext-enable redis
+ENV APP_NAME="Question Board" \
+    APP_ENV=production \
+    APP_DEBUG=false
 
-RUN set -x \
-    && nginxPackages=" \
-    nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
-    nginx-module-xslt=${NGINX_VERSION}-r${PKG_RELEASE} \
-    nginx-module-geoip=${NGINX_VERSION}-r${PKG_RELEASE} \
-    nginx-module-image-filter=${NGINX_VERSION}-r${PKG_RELEASE} \
-    nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${PKG_RELEASE} \
-    " \
-    apk add -X "https://nginx.org/packages/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages
+COPY ./docker/docker-php-* /usr/local/bin/
+RUN dos2unix /usr/local/bin/docker-php-entrypoint
+RUN dos2unix /usr/local/bin/docker-php-entrypoint-dev
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 
-COPY ./docker/supervisord.conf /etc/supervisord.conf
+WORKDIR /var/www/app
+COPY . .
+RUN composer dump-autoload -o \
+    && chown -R :www-data /var/www/app \
+    && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
 
 EXPOSE 80
 
