@@ -31,9 +31,14 @@ class ChapterRepository implements IChapterRepository {
         $perPage = (int)$perPageInput;
         $skip    = (int)(($page - 1) * $perPage);
 
-        $count  = Manga::whereRelation('chapters', 'published_plus_at', '<=', now())->count();
+        $count = Manga::whereHas('chapters', function ($query) {
+                             $query->where('published_at', '<=', now())
+                                   ->where('published_at', '>=', now()->subDays(3));
+                         })->count();
         $mangas = Manga::whereHas('chapters', function ($query) {
-            $query->where('published_plus_at', '<=', now())->orderBy('published_plus_at', 'desc');
+            $query->where('published_at', '<=', now())
+                  ->where('published_at', '>=', now()->subDays(3))
+                  ->orderBy('published_at', 'desc');
         })->orderBy('last_published_at', 'desc')
                        ->skip($skip)
                        ->take($perPage)
@@ -41,9 +46,9 @@ class ChapterRepository implements IChapterRepository {
 
         foreach ($mangas as $key => $manga) {
             $chapters = $manga->chapters()
-                              ->where('published_plus_at', '<=', now())
-                              ->where('published_plus_at', '>=', now()->subDays(3))
-                              ->orderBy('published_plus_at', 'desc')
+                              ->where('published_at', '<=', now())
+                              ->where('published_at', '>=', now()->subDays(3))
+                              ->orderBy('published_at', 'desc')
                               ->limit(5)
                               ->get();
 
