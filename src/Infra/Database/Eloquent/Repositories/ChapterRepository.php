@@ -42,6 +42,7 @@ class ChapterRepository implements IChapterRepository {
         foreach ($mangas as $key => $manga) {
             $chapters = $manga->chapters()
                               ->where('published_plus_at', '<=', now())
+                              ->where('published_plus_at', '>=', now()->subDays(3))
                               ->orderBy('published_plus_at', 'desc')
                               ->limit(5)
                               ->get();
