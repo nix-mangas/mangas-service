@@ -58,7 +58,7 @@ class ChapterRepository implements IChapterRepository {
             'data'         => $mangas,
             "per_page"     => $perPage,
             "to"           => $toNextPage,
-            "total"        => $totalPages,
+            "total"        => $count,
             "last_page"    => $totalPages
         ];
     }
