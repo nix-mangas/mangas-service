@@ -15,7 +15,7 @@ class ListChaptersByMangaController extends Controller {
     public function __invoke(Request $request, string $slug): JsonResponse
     {
         $filters = [
-            'order'    => $request?->query('order'),
+            'order'    => $request?->query('sort_by'),
             'search'   => $request?->query('search'),
             'per_page' => $request?->query('per_page'),
         ];

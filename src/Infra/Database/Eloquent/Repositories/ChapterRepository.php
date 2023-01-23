@@ -105,7 +105,7 @@ class ChapterRepository implements IChapterRepository {
 
     public function listByManga(string $manga, array $filters)
     {
-        $orderBy = $filters['order'] ?? 'desc';
+        $orderBy = $filters['order'] ?? 'DESC';
         $perPage = $filters['per_page'] ?? 30;
         $search  = $filters['search'];
 
