@@ -114,14 +114,14 @@ class ChapterRepository implements IChapterRepository {
                 $query->whereRelation('manga', 'slug', $manga)
                       ->where('published_at', '<=', now())
                       ->with([ 'scan' ])
-                      ->orderBy('number', 'DESC')
+                      ->orderBy('number', $orderBy)
             )->paginate($perPage);
         }
 
         return Chapter::whereRelation('manga', 'slug', $manga)
                       ->where('published_at', '<=', now())
                       ->with([ 'scan' ])
-                      ->orderByDesc('number')
+                      ->orderBy('number', $orderBy)
                       ->paginate($perPage);
     }
 
