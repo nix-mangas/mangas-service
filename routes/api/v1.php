@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Infra\Http\Api\Controllers\Chapter\DeleteChapterController;
 use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
-use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
+use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
 use Infra\Http\Api\Controllers\Chapter\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
@@ -61,15 +61,11 @@ use Infra\Http\Api\Controllers\Scan\UpdateScanController;
 |
 */
 
-Route::middleware(['auth:api'])->get('@me', function (){
-   $user = \Illuminate\Support\Facades\Auth::token();
-   dd($user);
-});
-
 Route::get('mangas', SearchMangaController::class);
 Route::get('mangas/genres/{genre}', ListMangasByGenreController::class);
 Route::get('mangas/{slug}/details', GetMangaBySlugController::class);
 Route::get('mangas/{slug}/chapters', ListChaptersByMangaController::class);
+Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::class);
 Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class);
 
 Route::get('chapters/latest', LatestChaptersController::class);

@@ -223,4 +223,8 @@ class ChapterRepository implements IChapterRepository {
 
         return (int)$next['number'];
     }
+
+    public function getFirstChapterByManga(string $manga) {
+        return Chapter::whereRelation('manga', 'slug', $manga)->orderBy('number', 'ASC')->first();
+    }
 }

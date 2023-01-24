@@ -34,4 +34,6 @@ interface IChapterRepository {
     public function getByMangaAndNumber(string $manga, string $number);
 
     public function getLatestChapterByManga(string $manga);
+
+    public function getFirstChapterByManga(string $manga);
 }
