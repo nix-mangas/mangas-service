@@ -200,6 +200,7 @@ class ChapterRepository implements IChapterRepository {
 
         $next = Chapter::whereRelation('manga', 'slug', $manga)
                        ->where('published_at', '<=', now())
+                       ->orderBy('number', 'asc')
                        ->firstWhere('number', '>', $number);
 
         $chapter = Chapter::with([ 'pages' ])
