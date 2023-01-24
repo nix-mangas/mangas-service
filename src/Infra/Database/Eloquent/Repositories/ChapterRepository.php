@@ -116,7 +116,7 @@ class ChapterRepository implements IChapterRepository {
 
         if ($search) {
             return Chapter::whereRelation('manga', 'slug', $manga)
-                          ->where('number', 'like', '%'.$search.'%')
+                          ->where('number', $search)
                           ->where('published_at', '<=', now())
                           ->with([ 'scan' ])
                           ->orderBy('number', $orderBy)
