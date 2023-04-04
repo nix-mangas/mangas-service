@@ -20,8 +20,8 @@ class GetPagesByChapterController extends Controller {
      */
     public function __invoke(Request $request, string $id): JsonResponse
     {
-        return Cache::remember($id, 60, function ($id) {
-            return $this->useCase->execute($id);
-        });
+        Cache::add($id, $this->useCase->execute($id), 60);
+
+        return Cache::get($id);
     }
 }

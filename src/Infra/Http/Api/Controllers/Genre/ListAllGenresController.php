@@ -24,8 +24,9 @@ class ListAllGenresController extends Controller {
             'search'   => $request?->query('search'),
             'per_page' => $request?->query('per_page'),
         ];
-        return Cache::remember('genres-' . $request?->query('page') ?? '1', 90, function ($filters) {
-            return $this->useCase->execute($filters);
-        });
+
+        Cache::add('genres-' . $request->query('page') ?? '1', $this->useCase->execute($filters), 90);
+
+        return Cache::get('genres-' . $request->query('page') ?? '1');
     }
 }

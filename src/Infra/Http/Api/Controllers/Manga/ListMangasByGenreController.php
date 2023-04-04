@@ -28,11 +28,11 @@ class ListMangasByGenreController extends Controller {
             'per_page' => $request?->query('per_page'),
         ];
 
-        return Cache::remember($genre, 60, function ($genre, $filters) {
-            return $this->useCase->execute(
-                genre  : $genre,
-                filters: $filters,
-            );
-        });
+        Cache::add($genre, $this->useCase->execute(
+            genre  : $genre,
+            filters: $filters,
+        ), 60);
+
+        return Cache::get($genre);
     }
 }

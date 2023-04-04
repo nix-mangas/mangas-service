@@ -20,8 +20,9 @@ class ListChaptersByMangaController extends Controller {
             'search'   => $request?->query('search'),
             'per_page' => $request?->query('per_page'),
         ];
-        return Cache::remember($slug, 60, function ($slug, $filters) {
-            return $this->useCase->execute($slug, $filters);
-        });
+
+        Cache::add($slug, $this->useCase->execute($slug, $filters), 60);
+
+        return Cache::get($slug);
     }
 }
