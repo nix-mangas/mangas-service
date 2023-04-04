@@ -6,6 +6,7 @@ use App\Genre\UseCases\ListAllGenresUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class ListAllGenresController extends Controller {
     public function __construct(private readonly ListAllGenresUseCase $useCase)
@@ -23,6 +24,8 @@ class ListAllGenresController extends Controller {
             'search'   => $request?->query('search'),
             'per_page' => $request?->query('per_page'),
         ];
-        return $this->useCase->execute($filters);
+        return Cache::remember('genres-' . $request?->query('page') ?? '1', 90, function ($filters) {
+            return $this->useCase->execute($filters);
+        });
     }
 }

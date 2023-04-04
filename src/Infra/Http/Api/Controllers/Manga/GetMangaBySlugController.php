@@ -5,6 +5,7 @@ namespace Infra\Http\Api\Controllers\Manga;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class GetMangaBySlugController extends Controller {
     public function __construct(private readonly \App\Manga\UseCases\GetMangaBySlugUseCase $useCase)
@@ -20,6 +21,8 @@ class GetMangaBySlugController extends Controller {
      */
     public function __invoke(Request $request, string $slug): JsonResponse
     {
-        return $this->useCase->execute($slug);
+        return Cache::remember($slug, 60, function ($slug) {
+            return $this->useCase->execute($slug);
+        });
     }
 }

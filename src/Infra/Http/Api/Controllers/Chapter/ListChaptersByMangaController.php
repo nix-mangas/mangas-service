@@ -6,6 +6,7 @@ use App\Chapter\UseCases\ListChaptersByMangaUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class ListChaptersByMangaController extends Controller {
     public function __construct(private readonly ListChaptersByMangaUseCase $useCase)
@@ -19,6 +20,8 @@ class ListChaptersByMangaController extends Controller {
             'search'   => $request?->query('search'),
             'per_page' => $request?->query('per_page'),
         ];
-        return $this->useCase->execute($slug, $filters);
+        return Cache::remember($slug, 60, function ($slug, $filters) {
+            return $this->useCase->execute($slug, $filters);
+        });
     }
 }

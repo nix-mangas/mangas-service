@@ -6,6 +6,7 @@ namespace Infra\Http\Api\Controllers\Manga;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class ListMangasByGenreController extends Controller {
     public function __construct(private readonly \App\Manga\UseCases\ListMangasByGenreUseCase $useCase)
@@ -27,9 +28,11 @@ class ListMangasByGenreController extends Controller {
             'per_page' => $request?->query('per_page'),
         ];
 
-        return $this->useCase->execute(
-            genre  : $genre,
-            filters: $filters,
-        );
+        return Cache::remember($genre, 60, function ($genre, $filters) {
+            return $this->useCase->execute(
+                genre  : $genre,
+                filters: $filters,
+            );
+        });
     }
 }
