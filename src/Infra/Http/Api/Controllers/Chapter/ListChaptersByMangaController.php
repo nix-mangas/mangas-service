@@ -21,8 +21,6 @@ class ListChaptersByMangaController extends Controller {
             'per_page' => $request?->query('per_page'),
         ];
 
-        Cache::add($slug, $this->useCase->execute($slug, $filters), 60);
-
-        return Cache::get($slug);
+        return $this->useCase->execute($slug, $filters);
     }
 }
