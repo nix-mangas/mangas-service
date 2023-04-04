@@ -6,6 +6,7 @@ use App\Chapter\UseCases\GetChapterDetailsUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class GetChapterDetailsController extends Controller {
     public function __construct(private readonly GetChapterDetailsUseCase $useCase)
@@ -20,6 +21,8 @@ class GetChapterDetailsController extends Controller {
      */
     public function __invoke(Request $request, string $slug, string $number): JsonResponse
     {
-        return $this->useCase->execute(manga: $slug, chapter: $number);
+        Cache::add($slug . '-' . $number, $this->useCase->execute(manga: $slug, chapter: $number), 60);
+
+        return Cache::get($slug . '-' . $number);
     }
 }
