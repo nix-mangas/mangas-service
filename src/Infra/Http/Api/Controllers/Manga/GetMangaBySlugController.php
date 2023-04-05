@@ -21,8 +21,12 @@ class GetMangaBySlugController extends Controller {
      */
     public function __invoke(Request $request, string $slug): JsonResponse
     {
-        Cache::add($slug, $this->useCase->execute($slug), 60);
+        if (Cache::has($slug)) {
+            return Cache::get($slug);
+        }
 
+        Cache::put($slug, $this->useCase->execute($slug), 60);
+        
         return Cache::get($slug);
     }
 }

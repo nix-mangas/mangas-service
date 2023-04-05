@@ -21,8 +21,14 @@ class GetChapterDetailsController extends Controller {
      */
     public function __invoke(Request $request, string $slug, string $number): JsonResponse
     {
-        Cache::add($slug . '-' . $number, $this->useCase->execute(manga: $slug, chapter: $number), 60);
+        $key = $slug . '-' . $number;
 
-        return Cache::get($slug . '-' . $number);
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
+        Cache::put($key, $this->useCase->execute(manga: $slug, chapter: $number), 60);
+        
+        return Cache::get($key);
     }
 }
