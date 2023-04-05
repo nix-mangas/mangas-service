@@ -6,6 +6,7 @@ use App\Chapter\UseCases\LatestChaptersUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Infra\Http\App\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class LatestChaptersController extends Controller {
     public function __construct(private readonly LatestChaptersUseCase $useCase)
@@ -22,6 +23,9 @@ class LatestChaptersController extends Controller {
             'per_page' => $request?->query('per_page'),
             'page'     => $request?->query('page'),
         ];
-        return $this->useCase->execute($filters);
+        
+        Cache::add('latestchapters-' . ($request->query('page') ?? '1') . $request->query('per_page') ?? '10', $this->useCase->execute($filters), 10);
+
+        return Cache::get('latestchapters-' . ($request->query('page') ?? '1') . $request->query('per_page') ?? '10');
     }
 }
