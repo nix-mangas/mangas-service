@@ -21,6 +21,18 @@ class ListChaptersByMangaController extends Controller {
             'per_page' => $request?->query('per_page'),
         ];
 
+        $key = 'mangachapters' . $slug . ($request?->query('sort_by') ?? 'default') .  $request?->query('per_page') ?? '30';
+
+        if($request?->query('search') == null) {
+            if (Cache::has($key)) {
+                return Cache::get($key);
+            }
+    
+            Cache::put($key, $this->useCase->execute($slug, $filters), 60);
+            
+            return Cache::get($key);
+        }
+
         return $this->useCase->execute($slug, $filters);
     }
 }
