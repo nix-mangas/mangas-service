@@ -23,9 +23,15 @@ class LatestChaptersController extends Controller {
             'per_page' => $request?->query('per_page'),
             'page'     => $request?->query('page'),
         ];
-        
-        Cache::add('latestchapters-' . ($request->query('page') ?? '1') . $request->query('per_page') ?? '10', $this->useCase->execute($filters), 60);
 
-        return Cache::get('latestchapters-' . ($request->query('page') ?? '1') . $request->query('per_page') ?? '10');
+        $key = 'latestchapters-' . ($request->query('page') ?? '1') . $request->query('per_page') ?? '10';
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
+        Cache::put($key, $this->useCase->execute($filters), 60);
+        
+        return Cache::get($key);
     }
 }
