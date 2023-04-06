@@ -24,7 +24,7 @@ class SearchMangaController extends Controller {
             'per_page' => $request?->query('per_page'),
         ];
 
-        $key = 'mangas-' . $request->query('order') ?? 'default' . $request?->query('per_page') ?? '10';
+        $key = 'mangas-' . $request->query('order') ?? 'default' . ($request?->query('per_page') ?? '10') . $request?->query('page') ?? '1';
 
         if($request->query('search') == null) {
             if (Cache::has($key)) {
