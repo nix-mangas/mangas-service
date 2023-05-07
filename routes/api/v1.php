@@ -103,6 +103,7 @@ Route::get('latest', function (Request $request) {
                 ->when(!!$format, function (Builder $query) use ($format) {
                     $query->whereFormat($format);
                 })
+                ->orderBy('last_published_at', 'desc')
                 ->paginate();
         }
     );
