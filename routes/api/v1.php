@@ -8,7 +8,6 @@
 
 
 use App\Account\Models\User;
-use App\Infra\Http\Api\Controllers\Manga\LatestChaptersController as MangaLatestChaptersController;
 use App\Manga\Models\Manga;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -19,6 +18,7 @@ use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
 use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;
 use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
+use Infra\Http\Api\Controllers\Chapter\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
 use Infra\Http\Api\Controllers\Chapter\RestoreChapterController;
@@ -72,7 +72,7 @@ Route::get('mangas/{slug}/chapters', ListChaptersByMangaController::class);
 Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::class);
 Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class);
 
-Route::get('chapters/latest', MangaLatestChaptersController::class);
+Route::get('chapters/latest', LatestChaptersController::class);
 
 Route::get('latest', function (Request $request) {
     $showNotAdultContent = !$request->boolean('show_adult_content', false);
