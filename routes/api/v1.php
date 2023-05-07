@@ -109,7 +109,8 @@ Route::get('latest', function (Request $request) {
 
     return response()->json($mangas);
 });
-Route::get('chapters/{id}/details', GetChapterDetailsController::class);
+Route::get('chapters/{chapter}', [GetChapterDetailsController::class, 'show']);
+Route::get('chapters/{id}/details', [GetChapterDetailsController::class, 'byNumber']);
 Route::get('chapters/{id}/pages', GetPagesByChapterController::class);
 
 Route::get('genres', ListAllGenresController::class);
