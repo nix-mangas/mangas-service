@@ -94,7 +94,6 @@ Route::get('latest', function (Request $request) {
                         ->withCount(['pages'])
                         ->where('published_at', '>=', now()->startOfWeek())
                         ->orderBy('published_at', 'desc')
-                        ->take(5)
                         ->get();
                 }])
                 ->when($showNotAdultContent, function (Builder $query) {
