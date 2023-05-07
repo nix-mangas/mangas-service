@@ -124,7 +124,7 @@ class Manga extends Model implements Auditable
             })
             ->with(['chapters' => function ($query) {
                 $query
-                    ->withCount('pages')
+                    ->withCount(['pages'])
                     ->where('published_at', '>=', now()->startOfWeek())
                     ->orderBy('published_at', 'desc')
                     ->get();

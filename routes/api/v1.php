@@ -8,15 +8,17 @@
 
 
 use App\Account\Models\User;
+use App\Infra\Http\Api\Controllers\Manga\LatestChaptersController as MangaLatestChaptersController;
 use App\Manga\Models\Manga;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Infra\Http\Api\Controllers\Chapter\DeleteChapterController;
 use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
 use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;
 use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
-use Infra\Http\Api\Controllers\Manga\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
 use Infra\Http\Api\Controllers\Chapter\RestoreChapterController;
@@ -70,7 +72,43 @@ Route::get('mangas/{slug}/chapters', ListChaptersByMangaController::class);
 Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::class);
 Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class);
 
-Route::get('chapters/latest', [LatestChaptersController::class, 'latest']);
+Route::get('chapters/latest', MangaLatestChaptersController::class);
+
+Route::get('latest', function (Request $request) {
+    $showNotAdultContent = !$request->boolean('show_adult_content', false);
+    $format = $request->query('format');
+
+    $key = 'mangas_latest::show_not_adult::'.$showNotAdultContent.'::format::'.$format;
+
+    $mangas = Cache::remember(
+        $key,
+        60,
+        function () use ($showNotAdultContent, $format) {
+            return Manga::query()
+                ->whereHas('chapters', function ($query) {
+                    $query
+                        ->where('published_at', '>=', now()->startOfWeek())
+                        ->orderBy('published_at', 'desc');
+                })
+                ->with(['chapters' => function ($query) {
+                    $query
+                        ->withCount(['pages'])
+                        ->where('published_at', '>=', now()->startOfWeek())
+                        ->orderBy('published_at', 'desc')
+                        ->get();
+                }])
+                ->when($showNotAdultContent, function (Builder $query) {
+                    $query->whereIsAdult(false);
+                })
+                ->when(!!$format, function (Builder $query) use ($format) {
+                    $query->whereFormat($format);
+                })
+                ->paginate();
+        }
+    );
+
+    return response()->json($mangas);
+});
 Route::get('chapters/{id}/details', GetChapterDetailsController::class);
 Route::get('chapters/{id}/pages', GetPagesByChapterController::class);
 
