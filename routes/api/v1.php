@@ -76,8 +76,9 @@ Route::get('chapters/latest', LatestChaptersController::class);
 Route::get('latest', function (Request $request) {
     $showNotAdultContent = !$request->boolean('show_adult_content', true);
     $format = $request->query('format');
+    $page = $request->query('page');
 
-    $key = 'mangas_latest::show_not_adult::'.$showNotAdultContent.'::format::'.$format;
+    $key = 'mangas_latest::show_not_adult::'.$showNotAdultContent.'::format::'.$format.'::page::'.$page;
 
     $mangas = Cache::remember(
         $key,
