@@ -70,7 +70,6 @@ Route::get('mangas/genres/{genre}', ListMangasByGenreController::class);
 Route::get('mangas/{slug}/details', GetMangaBySlugController::class);
 Route::get('mangas/{slug}/chapters', ListChaptersByMangaController::class);
 Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::class);
-Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class);
 
 Route::get('chapters/latest', LatestChaptersController::class);
 
@@ -111,7 +110,6 @@ Route::get('latest', function (Request $request) {
     return response()->json($mangas);
 });
 Route::get('chapters/{chapter}', [GetChapterDetailsController::class, 'show']);
-Route::get('chapters/{id}/details', [GetChapterDetailsController::class, 'byNumber']);
 Route::get('chapters/{id}/pages', GetPagesByChapterController::class);
 
 Route::get('genres', ListAllGenresController::class);
