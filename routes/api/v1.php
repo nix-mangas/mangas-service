@@ -70,7 +70,7 @@ Route::get('mangas/{slug}/chapters', ListChaptersByMangaController::class);
 Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::class);
 Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class);
 
-Route::get('chapters/latest', LatestChaptersController::class);
+Route::get('chapters/latest', [LatestChaptersController::class, 'latest']);
 Route::get('chapters/{id}/details', GetChapterDetailsController::class);
 Route::get('chapters/{id}/pages', GetPagesByChapterController::class);
 
