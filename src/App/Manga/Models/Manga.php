@@ -16,9 +16,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Builder;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class Manga extends Model implements Auditable {
+class Manga extends Model implements Auditable
+{
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
@@ -94,21 +96,38 @@ class Manga extends Model implements Auditable {
 
     protected function slug(): Attribute
     {
-        return Attribute::set(fn(string $value) => str($value)->slug('-'));
+        return Attribute::set(fn (string $value) => str($value)->slug('-'));
     }
 
     protected function alternativeTitles(): Attribute
     {
-        return Attribute::set(fn(array $value) => implode(',', $value));
+        return Attribute::set(fn (array $value) => implode(',', $value));
     }
 
     protected function cover(): Attribute
     {
-        return Attribute::get(fn($value) => Storage::url($value ?? env('DEFAULT_COVER_IMG')));
+        return Attribute::get(fn ($value) => Storage::url($value ?? env('DEFAULT_COVER_IMG')));
     }
 
     protected function thumbnail(): Attribute
     {
-        return Attribute::get(fn($value) =>  Storage::url($value ?? env('DEFAULT_THUMBNAIL_IMG')));
+        return Attribute::get(fn ($value) =>  Storage::url($value ?? env('DEFAULT_THUMBNAIL_IMG')));
+    }
+
+    public function scopeLatestChapters(Builder $query): Builder
+    {
+        return $query
+            ->whereHas('chapters', function ($query) {
+                $query
+                    ->where('published_at', '>=', now()->startOfWeek())
+                    ->orderBy('published_at', 'desc');
+            })
+            ->with(['chapters' => function ($query) {
+                $query
+                    ->withCount('pages')
+                    ->where('published_at', '>=', now()->startOfWeek())
+                    ->orderBy('published_at', 'desc')
+                    ->get();
+            }]);
     }
 }

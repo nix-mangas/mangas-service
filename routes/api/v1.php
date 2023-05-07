@@ -16,7 +16,7 @@ use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
 use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;
 use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
-use Infra\Http\Api\Controllers\Chapter\LatestChaptersController;
+use Infra\Http\Api\Controllers\Manga\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
 use Infra\Http\Api\Controllers\Chapter\RestoreChapterController;
