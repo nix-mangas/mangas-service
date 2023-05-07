@@ -8,12 +8,14 @@
 
 
 use App\Account\Models\User;
+use App\Manga\Models\Manga;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Infra\Http\Api\Controllers\Chapter\DeleteChapterController;
 use Infra\Http\Api\Controllers\Chapter\DestroyChapterController;
 use Infra\Http\Api\Controllers\Chapter\GetChapterDetailsController;
-use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
+use Infra\Http\Api\Controllers\Chapter\GetFirstChapterByMangaController;
+use Infra\Http\Api\Controllers\Chapter\GetPagesByChapterController;
 use Infra\Http\Api\Controllers\Chapter\LatestChaptersController;
 use Infra\Http\Api\Controllers\Chapter\ListChaptersByMangaController;
 use Infra\Http\Api\Controllers\Chapter\PublishChapterController;
@@ -81,6 +83,10 @@ Route::get('scans/{id}/members', ListMembersByScanController::class);
 
 Route::get('peoples', SearchPeopleController::class);
 Route::get('peoples/{id}/works', ListWorksByPeopleController::class);
+
+Route::get('mangas/random', function (Request $request) {
+    return response()->json(['manga' => Manga::query()->with(['genres'])->inRandomOrder()->first()]);
+});
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('peoples/new', RegisterPeopleController::class);
@@ -151,6 +157,3 @@ Route::middleware(['auth:api', 'can:admin'])->group(function () {
         return response()->json(\App\Genre\Models\Genre::onlyTrashed()->get());
     });
 });
-
-
-
