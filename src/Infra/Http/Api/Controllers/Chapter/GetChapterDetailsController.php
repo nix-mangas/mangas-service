@@ -40,7 +40,7 @@ class GetChapterDetailsController extends Controller
     {
         $chapter = Cache::remember('chapter::'.$chapter, 60, function () use ($chapter) {
             return Chapter::query()
-                ->with(['pages'])
+                ->with(['pages', 'manga'])
                 ->withCount(['pages'])
                 ->whereId($chapter)
                 ->orWhere('slug', $chapter)
