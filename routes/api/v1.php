@@ -75,7 +75,7 @@ Route::get('mangas/{slug}/{chapter}/chapter', GetChapterDetailsController::class
 Route::get('chapters/latest', LatestChaptersController::class);
 
 Route::get('latest', function (Request $request) {
-    $showNotAdultContent = !$request->boolean('show_adult_content', false);
+    $showNotAdultContent = !$request->boolean('show_adult_content', true);
     $format = $request->query('format');
 
     $key = 'mangas_latest::show_not_adult::'.$showNotAdultContent.'::format::'.$format;
@@ -124,7 +124,13 @@ Route::get('peoples', SearchPeopleController::class);
 Route::get('peoples/{id}/works', ListWorksByPeopleController::class);
 
 Route::get('mangas/random', function (Request $request) {
-    return response()->json(['manga' => Manga::query()->with(['genres'])->where('is_adult', false)->inRandomOrder()->first()]);
+    return response()->json([
+        Manga::query()
+            ->with(['genres'])
+            ->where('is_adult', false)
+            ->inRandomOrder()
+            ->first()
+    ]);
 });
 
 Route::middleware(['auth:api'])->group(function () {
