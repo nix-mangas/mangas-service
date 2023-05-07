@@ -84,14 +84,14 @@ class Manga extends Model implements Auditable
         return $this->hasMany(Chapter::class);
     }
 
-    public function oldestChapter()
+    public function firstChapter()
     {
-        return $this->hasOne(Chapter::class)->oldestOfMany();
+        return $this->hasOne(Chapter::class)->ofMany('number', 'min');
     }
 
-    public function latestChapter()
+    public function lastChapter()
     {
-        return $this->hasOne(Chapter::class)->latestOfMany();
+        return $this->hasOne(Chapter::class)->ofMany('number', 'max');
     }
 
     protected function slug(): Attribute

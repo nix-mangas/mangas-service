@@ -68,7 +68,7 @@ class PublishChapterUseCase {
             $pages = [];
 
             foreach ($input['pages'] as $key => $page) {
-                $filename = $page->getClientOriginalName();
+                $filename = time().$key+1.$page->getClientOriginalExtension();
                 $filepath = $chapterFolder.$filename;
 
                 Storage::disk('s3')->put($filepath, file_get_contents($page));
