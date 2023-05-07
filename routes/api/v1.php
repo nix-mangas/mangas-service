@@ -77,25 +77,26 @@ Route::get('chapters/latest', LatestChaptersController::class);
 Route::get('latest', function (Request $request) {
     $showNotAdultContent = !$request->boolean('show_adult_content', true);
     $format = $request->query('format');
+    $take = (int) $request->query('take', 5);
 
     $key = 'mangas_latest::show_not_adult::'.$showNotAdultContent.'::format::'.$format;
 
     $mangas = Cache::remember(
         $key,
         60,
-        function () use ($showNotAdultContent, $format) {
+        function () use ($showNotAdultContent, $format, $take) {
             return Manga::query()
                 ->whereHas('chapters', function ($query) {
                     $query
                         ->where('published_at', '>=', now()->startOfWeek())
                         ->orderBy('published_at', 'desc');
                 })
-                ->with(['chapters' => function ($query) {
+                ->with(['chapters' => function ($query, $take) {
                     $query
                         ->withCount(['pages'])
                         ->where('published_at', '>=', now()->startOfWeek())
                         ->orderBy('published_at', 'desc')
-                        ->get();
+                        ->take($take);
                 }])
                 ->when($showNotAdultContent, function (Builder $query) {
                     $query->whereIsAdult(false);
