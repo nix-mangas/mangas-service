@@ -87,15 +87,15 @@ Route::get('latest', function (Request $request) {
             return Manga::query()
                 ->whereHas('chapters', function ($query) {
                     $query
-                        ->where('published_at', '>=', now()->startOfWeek())
+                        ->whereHas('published_at', '>=', now()->startOfWeek())
                         ->orderBy('published_at', 'desc');
                 })
                 ->with(['chapters' => function ($query) {
                     $query
                         ->withCount(['pages'])
                         ->where('published_at', '>=', now()->startOfWeek())
-                        ->orderBy('published_at', 'desc')
                         ->take(5)
+                        ->orderBy('published_at', 'desc')
                         ->get();
                 }])
                 ->when($showNotAdultContent, function (Builder $query) {
