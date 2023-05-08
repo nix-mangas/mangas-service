@@ -80,16 +80,20 @@ class Chapter extends Model implements Auditable
     public function next()
     {
         return $this
-            ->where('manga_id', $this->manga_id)
+            ->query()
+            ->where('manga_id', $this->manga->id)
             ->where('number', '>', $this->number)
+            ->orderBy('number', 'asc')
             ->first();
     }
 
     public function prev()
     {
         return $this
-            ->where('manga_id', $this->manga_id)
+            ->query()
+            ->where('manga_id', $this->manga->id)
             ->where('number', '<', $this->number)
+            ->orderBy('number', 'desc')
             ->first();
     }
 }
