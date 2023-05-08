@@ -36,6 +36,8 @@ class GetMangaBySlugController extends Controller
             }
         );
 
-        return response()->json($manga);
+        return response()->json([
+            'manga' => $manga,
+        ]);
     }
 }
