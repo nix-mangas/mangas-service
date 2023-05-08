@@ -4,6 +4,7 @@ namespace App\Chapter\Models;
 
 use App\Manga\Models\Manga;
 use App\Scan\Models\Scan;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class Chapter extends Model implements Auditable {
+class Chapter extends Model implements Auditable
+{
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
@@ -67,12 +69,27 @@ class Chapter extends Model implements Auditable {
 
     protected function cover(): Attribute
     {
-        return Attribute::get(fn($value) => Storage::url($value ?? env('DEFAULT_COVER_IMG')));
+        return Attribute::get(fn ($value) => Storage::url($value ?? env('DEFAULT_COVER_IMG')));
     }
 
     protected function scansSupports(): Attribute
     {
-        return Attribute::set(fn(array $value) => implode(',', $value));
+        return Attribute::set(fn (array $value) => implode(',', $value));
     }
 
+    public function next()
+    {
+        return $this
+            ->where('manga_id', $this->manga_id)
+            ->where('number', '>', $this->number)
+            ->first();
+    }
+
+    public function prev()
+    {
+        return $this
+            ->where('manga_id', $this->manga_id)
+            ->where('number', '<', $this->number)
+            ->first();
+    }
 }
