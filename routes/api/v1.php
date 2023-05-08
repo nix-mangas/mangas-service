@@ -83,30 +83,30 @@ Route::get('latest', function (Request $request) {
     $mangas = Cache::remember(
         $key,
         60,
-        function () use ($showNotAdultContent, $format) {
-            return Manga::query()
-                ->whereHas('chapters', function ($query) {
-                    $query
-                        ->where('published_at', '>=', now()->startOfWeek())
-                        ->orderBy('published_at', 'desc');
-                })
-                ->with(['chapters' => function ($query) {
-                    $query
-                        ->withCount(['pages'])
-                        ->where('published_at', '>=', now()->startOfWeek())
-                        ->orderBy('published_at', 'desc')
-                        ->get();
-                }])
-                ->when($showNotAdultContent, function (Builder $query) {
-                    $query->whereIsAdult(false);
-                })
-                ->when(!!$format, function (Builder $query) use ($format) {
-                    $query->whereFormat($format);
-                })
-                ->orderBy('last_published_at', 'desc')
-                ->paginate();
-        }
+        Manga::query()
+            ->whereHas('chapters', function ($query) {
+                $query
+                    ->where('published_at', '>=', now()->startOfWeek())
+                    ->orderBy('published_at', 'desc');
+            })
+            ->with(['chapters' => function ($query) {
+                $query
+                    ->withCount(['pages'])
+                    ->where('published_at', '>=', now()->startOfWeek())
+                    ->orderBy('published_at', 'desc')
+                    ->get();
+            }])
+            ->when($showNotAdultContent, function (Builder $query) {
+                $query->whereIsAdult(false);
+            })
+            ->when(!!$format, function (Builder $query) use ($format) {
+                $query->whereFormat($format);
+            })
+            ->orderBy('last_published_at', 'desc')
+            ->paginate()
     );
+
+    dd($mangas);
 
     return response()->json($mangas);
 });
