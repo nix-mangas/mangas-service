@@ -25,7 +25,7 @@ class PublishChapterRequest extends FormRequest
     public function rules()
     {
         return [
-            'number'         => 'nullable|integer',
+            'number'         => 'nullable',
             'pages'          => 'required|array|max:500',
             'pages.*'        => 'image|mimes:jpg,jpeg,png,gif,webp'
         ];

@@ -24,13 +24,13 @@ class PublishChapterController extends Controller
     {
         $manga = Manga::query()->where('id', $manga)->orWhere('slug', $manga)->firstOrFail();
 
-        $lastChapterNumber = intval($manga->lastChapter?->number) ?? 0;
+        $lastChapterNumber = (int) $manga->lastChapter?->number ?? 0;
 
         $chapter = new Chapter();
 
         $chapter->is_published = false;
         $chapter->manga_id = $manga->id;
-        $chapter->number = $request?->number ?? $lastChapterNumber + 1;
+        $chapter->number = (float) $request?->number ?? $lastChapterNumber + 1;
         $chapter->title = $manga->title.' #'.$chapter->number;
         $chapter->slug = Str::slug($manga->title.' #'.$chapter->number);
 

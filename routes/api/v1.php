@@ -73,6 +73,14 @@ Route::get('mangas/{slug}/chapters/first', GetFirstChapterByMangaController::cla
 
 Route::get('chapters/latest', LatestChaptersController::class);
 
+Route::post('/mangas/{manga}/chapter/upload/test', function (Request $request) {
+
+
+    return response()->json([
+        $request->all(),
+    ], 201);
+});
+
 Route::get('latest', function (Request $request) {
     $showNotAdultContent = !$request->boolean('show_adult_content', true);
     $format = $request->query('format');
