@@ -201,4 +201,6 @@ Route::middleware(['auth:api', 'can:admin'])->group(function () {
     Route::get('genres/deleted', function () {
         return response()->json(\App\Genre\Models\Genre::onlyTrashed()->get());
     });
+
+    Route::post('/mangas/{manga}/chapter/upload', PublishChapterController::class);
 });

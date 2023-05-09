@@ -197,6 +197,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         \Infra\Providers\EventServiceProvider::class,
         \Infra\Providers\RouteServiceProvider::class,
+        \Infra\Providers\TelescopeServiceProvider::class,
 
     ],
 
