@@ -68,6 +68,9 @@ class PublishChapterController extends Controller
             'last_published_at' => now(),
         ]);
 
-        return response()->noContent();
+        return response()->json([
+            'data' => $chapter,
+            'status' => 'published',
+        ], 201);
     }
 }
