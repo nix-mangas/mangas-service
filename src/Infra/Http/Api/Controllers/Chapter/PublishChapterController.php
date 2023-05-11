@@ -20,9 +20,16 @@ class PublishChapterController extends Controller
      *
      * @param PublishChapterRequest $request
      */
-    public function __invoke(PublishChapterRequest $request, string $manga)
+    public function __invoke(PublishChapterRequest $request, string $manga): JsonResponse
     {
-        $manga = Manga::query()->where('id', $manga)->orWhere('slug', $manga)->firstOrFail();
+        $manga = Manga::query()->where('id', $manga)->orWhere('slug', $manga)->first();
+
+        if(empty($manga)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Manga not found',
+            ], 404);
+        }
 
         $lastChapterNumber = (int) $manga->lastChapter?->number ?? 0;
 
@@ -59,10 +66,10 @@ class PublishChapterController extends Controller
 
         $chapter->pages()->saveMany($pages);
 
-        $chapter->update([
-            'is_published' => true,
-            'published_at' => now(),
-        ]);
+        $chapter->is_published = true;
+        $chapter->published_at = now();
+
+        $chapter->save();
 
         $manga->update([
             'last_published_at' => now(),
