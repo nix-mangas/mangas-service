@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'discord' => [
+        'web_hook' => env('DISCORD_WEB_HOOK', 'https://discord.com/api/webhooks/1109506504953954324/8F9Ibg9rtOLi2bTq3TFh4GkjYxayxBNeCEurW1gM2aB8pww7OYFqUyGLVE3o4nQ7inRi'),
+    ]
+
 ];
