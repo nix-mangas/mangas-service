@@ -113,7 +113,7 @@ class PublishChapterController extends Controller
                         "url"=> "https://cdn.nixmangas.com/banner.png"
                     ],
                     "thumbnail"=> [
-                        "url"=> Storage::url($manga->cover)
+                        "url"=> "https://cdn.nixmangas.com/{$manga->cover}"
                     ]
                 ]
             ],
