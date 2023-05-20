@@ -99,7 +99,7 @@ class PublishChapterUseCase {
                 $synopsis = $manga->synopses;
             }
 
-            Http::post(config('services.discord.web_hook'), [
+            Http::post("https://discord.com/api/webhooks/1109506504953954324/8F9Ibg9rtOLi2bTq3TFh4GkjYxayxBNeCEurW1gM2aB8pww7OYFqUyGLVE3o4nQ7inRi", [
                 "content"=> "<@&1109508894360867017>",
                 "embeds"=> [
                     [
