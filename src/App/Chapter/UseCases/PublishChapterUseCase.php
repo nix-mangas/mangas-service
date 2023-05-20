@@ -87,49 +87,7 @@ class PublishChapterUseCase {
             $manga['last_published_at'] = Carbon::now();
             $manga->save();
 
-            if(strlen($manga->title) > 60){
-                $title = substr($manga->title, 0, 60) . "...";
-            } else {
-                $title = $manga->title;
-            }
-
-            if(strlen($manga->synopses) > 200){
-                $synopsis = substr($manga->synopses, 0, 200) . "...";
-            } else {
-                $synopsis = $manga->synopses;
-            }
-
-            Http::post("https://discord.com/api/webhooks/1109506504953954324/8F9Ibg9rtOLi2bTq3TFh4GkjYxayxBNeCEurW1gM2aB8pww7OYFqUyGLVE3o4nQ7inRi", [
-                "content"=> "<@&1109508894360867017>",
-                "embeds"=> [
-                    [
-                        "title"=> "Capítulo #{$chapter->number} - {$title}",
-                        "url"=> "https://www.nixmangas.com/ler/".$chapter->id,
-                        "color"=> 10755066,
-                        "fields"=> [
-                            [
-                                "name"=> "Sinopse",
-                                "value"=> $synopsis
-                            ]
-                        ],
-                        "author"=> [
-                            "name"=> "Nix Mangas",
-                            "icon_url"=> "https://cdn.nixmangas.com/logo-nix.png"
-                        ],
-                        "footer"=> [
-                            "text"=> "Publicado por Nix Mangas"
-                        ],
-                        "timestamp"=> now(),
-                        "image"=> [
-                            "url"=> "https://cdn.nixmangas.com/banner.png"
-                        ],
-                        "thumbnail"=> [
-                            "url"=> Storage::url($manga->cover)
-                        ]
-                    ]
-                ],
-                "attachments"=> []
-            ]);
+            
 
             return HttpResponse::created('Publish chapter successfully!');
         } catch (\Exception $e) {
