@@ -27,7 +27,7 @@ class PublishChapterRequest extends FormRequest
         return [
             'number'         => 'nullable',
             'pages'          => 'required|array|max:500',
-            'pages.*'        => 'image|mimes:jpg,jpeg,png,gif,webp'
+            'pages.*'        => 'image|mimes:jpg,jpeg,png,gif,webp,avif'
         ];
     }
 }
