@@ -41,13 +41,14 @@ class PublishChapterController extends Controller
         $chapter->number = (float) $request?->number ?? $lastChapterNumber + 1;
         $chapter->title = $manga->title.' #'.$chapter->number;
         $chapter->slug = Str::slug($manga->title.' #'.$chapter->number);
-
+        $chapter->content = $request->get('content');
+        $chapter->type = $request->get('type') ?? $request->filled('content') ? 'text' : 'pages';
 
         $chapter->save();
 
-        $pages = [];
-
         if ($request->hasFile('pages')) {
+            $pages = [];
+
             foreach ($request->file('pages') as $key => $file) {
                 $pageNumber= (int) $key + 1;
                 $filename = 'mangas/'.$manga->id.'/'.$chapter->id.'/'.time().'-'.$pageNumber.'.webp';
@@ -63,9 +64,9 @@ class PublishChapterController extends Controller
 
                 array_push($pages, $page);
             }
-        }
 
-        $chapter->pages()->saveMany($pages);
+            $chapter->pages()->saveMany($pages);
+        }
 
         $chapter->is_published = true;
         $chapter->published_at = now();

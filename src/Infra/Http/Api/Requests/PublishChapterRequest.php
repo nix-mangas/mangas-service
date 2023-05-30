@@ -26,8 +26,10 @@ class PublishChapterRequest extends FormRequest
     {
         return [
             'number'         => 'nullable',
-            'pages'          => 'required|array|max:500',
-            'pages.*'        => 'image|mimes:jpg,jpeg,png,gif,webp'
+            'pages'          => 'nullable|array|max:500',
+            'pages.*'        => 'image|mimes:jpg,jpeg,png,gif,webp',
+            'content'        => 'nullable|string|min:35',
+            'type'           => 'nullable|in:pages,text'
         ];
     }
 }
