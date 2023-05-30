@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('chapters', function (Blueprint $table) {
-            $table->string('type')->default('pages');
+            $table->enum('type', ['pages', 'text'])->default('pages');
             $table->text('content')->nullable();
         });
     }

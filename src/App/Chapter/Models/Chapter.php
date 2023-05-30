@@ -36,6 +36,8 @@ class Chapter extends Model implements Auditable
         'is_published',
         'published_at',
         'published_plus_at',
+        'content',
+        'type',
     ];
 
     protected $casts = [
