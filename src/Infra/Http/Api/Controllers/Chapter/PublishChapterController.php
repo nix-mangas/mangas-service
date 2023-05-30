@@ -42,7 +42,7 @@ class PublishChapterController extends Controller
         $chapter->title = $manga->title.' #'.$chapter->number;
         $chapter->slug = Str::slug($manga->title.' #'.$chapter->number);
         $chapter->content = $request->get('content');
-        $chapter->type = $request->get('type') ?? $request->filled('content') ? 'text' : 'pages';
+        $chapter->type = $request->has('content') ? 'text' : 'pages';
 
         $chapter->save();
 
