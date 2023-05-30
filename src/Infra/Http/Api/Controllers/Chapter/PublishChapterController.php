@@ -23,24 +23,20 @@ class PublishChapterController extends Controller
      */
     public function __invoke(PublishChapterRequest $request, string $manga): JsonResponse
     {
-        $manga = Manga::query()->where('id', $manga)->orWhere('slug', $manga)->first();
-
-        if(empty($manga)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Manga not found',
-            ], 404);
-        }
+        $manga = Manga::query()->where('id', $manga)->orWhere('slug', $manga)->firstOrFail();
 
         $lastChapterNumber = (int) $manga->lastChapter?->number ?? 0;
 
         $chapter = new Chapter();
 
+        $number = (float) $request?->number ?? $lastChapterNumber + 1;
+        $title = "Capítulo #{$number} - {$manga->title}";
+
         $chapter->is_published = false;
         $chapter->manga_id = $manga->id;
-        $chapter->number = (float) $request?->number ?? $lastChapterNumber + 1;
-        $chapter->title = $manga->title.' #'.$chapter->number;
-        $chapter->slug = Str::slug($manga->title.' #'.$chapter->number);
+        $chapter->number = $number;
+        $chapter->title = $title;
+        $chapter->slug = Str::slug($title);
         $chapter->content = $request->get('content');
         $chapter->type = $request->has('content') ? 'text' : 'pages';
 
@@ -62,7 +58,7 @@ class PublishChapterController extends Controller
                 $page->page_number = $pageNumber;
                 $page->page_url = $filename;
 
-                array_push($pages, $page);
+                $pages[] = $page;
             }
 
             $chapter->pages()->saveMany($pages);
@@ -73,9 +69,8 @@ class PublishChapterController extends Controller
 
         $chapter->save();
 
-        $manga->update([
-            'last_published_at' => now(),
-        ]);
+        $manga->last_published_at = now();
+        $manga->save();
 
         if(strlen($manga->title) > 60) {
             $title = substr($manga->title, 0, 60) . "...";
