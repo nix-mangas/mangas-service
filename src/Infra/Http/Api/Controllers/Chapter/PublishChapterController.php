@@ -29,7 +29,7 @@ class PublishChapterController extends Controller
 
         $chapter = new Chapter();
 
-        $number = (float) $request?->number ?? $lastChapterNumber + 1;
+        $number = $request->get('number') ?? $lastChapterNumber + 1;
         $title = "Capítulo #{$number} - {$manga->title}";
 
         $chapter->is_published = false;
@@ -37,8 +37,6 @@ class PublishChapterController extends Controller
         $chapter->number = $number;
         $chapter->title = $title;
         $chapter->slug = Str::slug($title);
-        $chapter->content = $request->get('content');
-        $chapter->type = $request->has('content') ? 'text' : 'pages';
 
         $chapter->save();
 
@@ -109,7 +107,7 @@ class PublishChapterController extends Controller
                         "url"=> "https://cdn.nixmangas.com/banner.png"
                     ],
                     "thumbnail"=> [
-                        "url"=> "https://cdn.nixmangas.com/{$manga->cover}"
+                        "url"=> Storage::disk('s3')->url($manga->cover)
                     ]
                 ]
             ],
