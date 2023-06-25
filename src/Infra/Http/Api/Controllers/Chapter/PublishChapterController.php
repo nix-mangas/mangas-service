@@ -90,7 +90,7 @@ class PublishChapterController extends Controller
             }
 
             Http::post(config('services.discord.web_hook'), [
-                "content"=> "<@&1109508894360867017>",
+                "content"=> "",
                 "embeds"=> [
                     [
                         "title"=> "Capítulo #{$chapter->number} - {$title}",
